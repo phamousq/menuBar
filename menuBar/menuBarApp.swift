@@ -23,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSMenuDele
     private var statusItem: NSStatusItem!
     private var menu: NSMenu!
     private var counter: Int = 0
+    private var isLongLength: Bool = true
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: 40)
@@ -36,9 +37,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSMenuDele
             
             let resetItem = NSMenuItem(title: "Reset Counter",
                                      action: #selector(resetCounter),
-                                     keyEquivalent: "0")
+                                     keyEquivalent: "r")
             resetItem.target = self
             menu.addItem(resetItem)
+            
+            let toggleLengthItem = NSMenuItem(title: "Toggle Length",
+                                            action: #selector(toggleLength),
+                                            keyEquivalent: "t")
+            toggleLengthItem.target = self
+            menu.addItem(toggleLengthItem)
             
             let incrementItem = NSMenuItem(title: "Increment Counter",
                                      action: #selector(increment),
@@ -80,7 +87,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSMenuDele
     
     @objc private func resetCounter() {
         counter = 0
-        updateTitle()
+        if let button = statusItem.button {
+            button.title = "\(counter)"
+        }
+    }
+    
+    @objc private func toggleLength() {
+        isLongLength.toggle()
+        let newLength: CGFloat = isLongLength ? 40 : 15
+        statusItem.length = newLength
     }
     
     @objc private func increment() {
